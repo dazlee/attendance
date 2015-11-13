@@ -18,9 +18,10 @@
 #-------------------------------------------------------------------------------
 
 import display
-import nfc
-import mysql
-import beeper
+#import nfc
+#import mysql
+#import beeper
+import requests
 
 import sys
 import tty
@@ -36,6 +37,18 @@ import RPi.GPIO as GPIO
 DEBUG=True
 #Enable printing informations to std. output
 VERBOSE=True
+
+BASE_URL="http://localhost"
+
+
+def restfulGet(url, params, uid="", fmt="json"):
+    r = requests.get(url + uid, params=params)
+	print "requesting", r.url
+	if r.status_code == requests.codes.ok:
+		print "success"
+	else:
+		r.raise_for_status()
+
 
 class Actions:
     incomming=1
@@ -187,9 +200,10 @@ def main():
             # and wait for user input on keyboard
             thr = thread.start_new_thread(printDateToDisplay, ())
             a = getOneKey()
-            displayTime=False
-            if 47 < a < 58:
-                readNfc(a)
+            restfulGet(BASE_URL, {})
+            #displayTime=False
+            #if 47 < a < 58:
+                #readNfc(a)
     except KeyboardInterrupt:
         GPIO.cleanup()
         pass
